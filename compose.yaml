@@ -1,10 +1,25 @@
 services:
-  mysql:
-    image: 'mysql:latest'
+  mysql-notificacao:
+    image: 'mysql:8.0'
+    container_name: mysql-notificacao
     environment:
-      - 'MYSQL_DATABASE=mydatabase'
-      - 'MYSQL_PASSWORD=secret'
-      - 'MYSQL_ROOT_PASSWORD=verysecret'
-      - 'MYSQL_USER=myuser'
+      - MYSQL_DATABASE=vaga_liberada_notificacao_db
+      - MYSQL_ROOT_PASSWORD=root
     ports:
-      - '3306'
+      - '3307:3306' # Porta 3307 para não bater com o banco da Agenda (3306)
+
+  # Use este bloco APENAS se o LocalStack da Agenda NÃO estiver rodando.
+  # Se já estiver rodando, comente as linhas abaixo.
+  localstack-shared:
+    image: localstack/localstack:latest
+    container_name: localstack-main
+    ports:
+      - "4566:4566"
+      - "4510-4559:4510-4559"
+    environment:
+      - SERVICES=sqs,sns
+      - AWS_DEFAULT_REGION=us-east-1
+    volumes:
+      # Se você copiar o script init-aws.sh do outro projeto, descomente abaixo:
+      # - ./docker/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
+      - "/var/run/docker.sock:/var/run/docker.sock"
