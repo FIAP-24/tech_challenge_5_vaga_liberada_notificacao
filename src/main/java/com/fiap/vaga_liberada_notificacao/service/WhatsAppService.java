@@ -14,12 +14,17 @@ public class WhatsAppService {
         this.repository = repository;
     }
 
+    // Extraí a chamada a Thread.sleep para um método protegido para facilitar testes
+    protected void sleepMillis(long millis) throws InterruptedException {
+        Thread.sleep(millis);
+    }
+
     public void enviarMensagem(NotificacaoSqsDto dto) {
         System.out.println("📱 [WhatsApp Provider] Iniciando conexão com a API...");
 
         try {
             // Simula latência de rede (1.5 segundos)
-            Thread.sleep(1500);
+            sleepMillis(1500);
 
             // Simula o envio
             System.out.println("📨 [WhatsApp Provider] Enviando para Paciente ID: " + dto.pacienteId());
