@@ -34,7 +34,7 @@ docker compose up -d
 
 Isso sobe:
 
-- **MySQL** na porta `3307` (banco `vaga_liberada_notificacao_db`)
+- **MySQL** na porta `3306` (banco `vaga_liberada_notificacao_db`)
 - **LocalStack** na porta `4566` (SQS e SNS)
 
 **Importante:** a fila `notificacao-agenda-queue` precisa existir no LocalStack. Se for criada por outro projeto (ex.: microsserviço de agenda), use o mesmo LocalStack; caso contrário, crie a fila manualmente ou via script de inicialização.
@@ -54,7 +54,7 @@ Principais propriedades em `src/main/resources/application.properties`:
 | Propriedade | Descrição |
 |-------------|-----------|
 | `server.port` | Porta HTTP (8081) |
-| `spring.datasource.url` | URL do MySQL (localhost:3307) |
+| `spring.datasource.url` | URL do MySQL (localhost:3306) |
 | `spring.cloud.aws.endpoint` | Endpoint do LocalStack (http://localhost:4566) |
 | `spring.cloud.aws.region.static` | Região AWS (us-east-1) |
 
