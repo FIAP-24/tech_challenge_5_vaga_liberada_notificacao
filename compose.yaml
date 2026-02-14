@@ -1,25 +1,35 @@
 services:
-  mysql-notificacao:
+  notificacao_app:
+    container_name: notificacao_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: notificacao_app:latest
+    ports:
+      - 8081:8081
+    depends_on:
+      mysql_notify:
+          condition: service_healthy
+    networks:
+      - shared_network
+    environment:
+      - AWS_ENDPOINT_URL=http://localstack:4566
+
+  mysql_notify:
     image: 'mysql:8.0'
-    container_name: mysql-notificacao
+    container_name: mysql_notify
     environment:
       - MYSQL_DATABASE=vaga_liberada_notificacao_db
       - MYSQL_ROOT_PASSWORD=root
     ports:
-      - '3307:3306' # Porta 3307 para não bater com o banco da Agenda (3306)
+      - '3308:3306' # Porta 3308 para não bater com o banco da Agenda (3306)
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+    networks:
+      - shared_network
 
-  # Use este bloco APENAS se o LocalStack da Agenda NÃO estiver rodando.
-  # Se já estiver rodando, comente as linhas abaixo.
-  localstack-shared:
-    image: localstack/localstack:latest
-    container_name: localstack-main
-    ports:
-      - "4566:4566"
-      - "4510-4559:4510-4559"
-    environment:
-      - SERVICES=sqs,sns
-      - AWS_DEFAULT_REGION=us-east-1
-    volumes:
-      # Se você copiar o script init-aws.sh do outro projeto, descomente abaixo:
-      # - ./docker/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
-      - "/var/run/docker.sock:/var/run/docker.sock"
+networks:
+  shared_network:
+    external: true
